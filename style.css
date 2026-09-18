@@ -398,3 +398,27 @@ h5 {
     }
 
 }
+
+.client-logo {
+    max-height: 83.3px;
+    max-width: 200px;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(0%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.client-logo:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+.clients-label {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.9;
+}

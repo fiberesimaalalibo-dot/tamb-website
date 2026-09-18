@@ -57,7 +57,21 @@
 
         </div>
 
+<!-- ============ CLIENTS ============ -->
+<div class="clients-strip text-center py-4">
 
+    <p class="clients-label mb-3">Trusted by</p>
+
+    <div class="d-flex flex-wrap justify-content-center align-items-center gap-5">
+
+        <img src="logos/logo4.png" alt="Client 1" class="client-logo">
+        <img src="logos/logo3.png" alt="Client 2" class="client-logo">
+        <img src="logos/logo2.png" alt="Client 3" class="client-logo">
+        <img src="logos/logo1.png" alt="Client 4" class="client-logo">
+
+    </div>
+
+</div>
         <hr>
 
 
