@@ -198,7 +198,7 @@ $projects = $stmt->fetchAll();
             </h2>
 
             <p>
-                Explore some of the projects delivered by Tambels.
+                Explore some of the projects delivered by Tambeles 4 Real.
             </p>
 
         </div>
