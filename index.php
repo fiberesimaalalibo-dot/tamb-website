@@ -1,9 +1,102 @@
 <?php
+
 require_once 'db.php';
 include 'header.php';
+
+
+// ============================================================
+// HANDLE CONTACT FORM
+// ============================================================
+
+$contact_success = '';
+$contact_error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $message = trim($_POST['message'] ?? '');
+
+    if ($name === '' || $email === '' || $message === '') {
+
+        $contact_error = 'Please complete all fields.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+        $contact_error = 'Please enter a valid email address.';
+    } else {
+
+        try {
+
+            $stmt = $pdo->prepare("
+                INSERT INTO contact_messages (name, email, message)
+                VALUES (:name, :email, :message)
+            ");
+
+            $stmt->execute([
+                ':name' => $name,
+                ':email' => $email,
+                ':message' => $message
+            ]);
+
+            $contact_success = 'Thank you. Your message has been sent successfully.';
+        } catch (PDOException $e) {
+
+            $contact_error = 'Unable to send your message. Please try again.';
+        }
+    }
+}
+
+
+// ============================================================
+// GET SITE CONTENT
+// ============================================================
+
+$stmt = $pdo->query("
+    SELECT section, title, content
+    FROM site_content
+");
+
+$site_content = [];
+
+while ($row = $stmt->fetch()) {
+    $site_content[$row['section']] = $row;
+}
+
+
+// Home
+$home_title = $site_content['home']['title'] ?? '';
+$home_content = $site_content['home']['content'] ?? '';
+
+
+// About
+$about_title = $site_content['about']['title'] ?? '';
+$about_content = $site_content['about']['content'] ?? '';
+
+
+// Contact
+$contact_title = $site_content['contact']['title'] ?? '';
+$contact_content = $site_content['contact']['content'] ?? '';
+
+
+// ============================================================
+// GET VISIBLE PROJECTS
+// ============================================================
+
+$stmt = $pdo->query("
+    SELECT id, title, description, image_path, image_path_2
+    FROM projects
+    WHERE display = TRUE
+    ORDER BY id DESC
+");
+
+$projects = $stmt->fetchAll();
+
 ?>
 
-<!-- HERO -->
+<!-- ============================================================
+     HERO
+============================================================= -->
+
 <section id="home" class="hero-section">
 
     <div class="container">
@@ -13,18 +106,19 @@ include 'header.php';
             <div class="col-lg-7">
 
                 <span class="hero-label">
-                    CONTRACT • PROCUREMENT • SALES • SUPPLY
+                    CONTRACT • PROCUREMENT • EQUIPMENT LEASING • HORTICULTURAL SALES • SUPPLY OF STATIONERY
                 </span>
 
                 <h1 class="hero-title">
-                    Reliable Solutions.
-                    <span>Professional Delivery.</span>
+
+                    <?php echo $home_title; ?>
+
                 </h1>
 
                 <p class="hero-text">
-                    TAMBELS 4 REAL NIG. LTD provides dependable contract,
-                    procurement, sales and supply services to organisations
-                    across diverse sectors.
+
+                    <?php echo $home_content; ?>
+
                 </p>
 
                 <div class="d-flex gap-3 mt-4">
@@ -48,7 +142,10 @@ include 'header.php';
 </section>
 
 
-<!-- ABOUT -->
+<!-- ============================================================
+     ABOUT
+============================================================= -->
+
 <section id="about" class="section-padding">
 
     <div class="container">
@@ -58,8 +155,9 @@ include 'header.php';
             <span>ABOUT US</span>
 
             <h2>
-                A trusted partner for
-                professional solutions.
+
+                <?php echo $about_title; ?>
+
             </h2>
 
         </div>
@@ -68,18 +166,11 @@ include 'header.php';
 
             <div class="col-lg-8">
 
-                <p class="lead">
-                    TAMBELS 4 REAL NIG. LTD is committed to providing
-                    quality products and dependable services through
-                    professionalism, efficiency and customer-focused
-                    delivery.
-                </p>
+                <div class="lead">
 
-                <p>
-                    Our operations cover contract services, procurement,
-                    sales and supply of stationery, horticultural products
-                    and other related services.
-                </p>
+                    <?php echo $about_content; ?>
+
+                </div>
 
             </div>
 
@@ -90,7 +181,10 @@ include 'header.php';
 </section>
 
 
-<!-- PROJECTS -->
+<!-- ============================================================
+     PROJECTS
+============================================================= -->
+
 <section id="projects" class="projects-section section-padding">
 
     <div class="container">
@@ -112,99 +206,73 @@ include 'header.php';
 
         <div class="row g-4">
 
-            <!-- PHP will generate these cards from PostgreSQL -->
+            <?php if (count($projects) > 0): ?>
 
-            <div class="col-md-6 col-lg-4">
+                <?php foreach ($projects as $project): ?>
 
-                <article class="project-card">
+                    <div class="col-md-6 col-lg-4">
 
-                    <img
-                        src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=900&q=80"
-                        alt="Project"
-                        class="project-image">
+                        <article class="project-card">
 
-                    <div class="project-body">
+                            <?php if (!empty($project['image_path_2'])): ?>
 
-                        <span class="project-category">
-                            PROCUREMENT
-                        </span>
+                                <div class="project-image-wrapper">
 
-                        <h3>
-                            Project Name
-                        </h3>
+                                    <img
+                                        src="<?php echo htmlspecialchars($project['image_path']); ?>"
+                                        alt="<?php echo htmlspecialchars($project['title']); ?>"
+                                        class="project-image project-image-one">
 
-                        <p>
-                            Project description will be retrieved
-                            from the database.
-                        </p>
+                                    <img
+                                        src="<?php echo htmlspecialchars($project['image_path_2']); ?>"
+                                        alt="<?php echo htmlspecialchars($project['title']); ?>"
+                                        class="project-image project-image-two">
 
-                    </div>
+                                </div>
 
-                </article>
+                            <?php elseif (!empty($project['image_path'])): ?>
 
-            </div>
+                                <img
+                                    src="<?php echo htmlspecialchars($project['image_path']); ?>"
+                                    alt="<?php echo htmlspecialchars($project['title']); ?>"
+                                    class="project-image">
+
+                            <?php endif; ?>
 
 
-            <div class="col-md-6 col-lg-4">
+                            <div class="project-body">
 
-                <article class="project-card">
+                                <span class="project-category">
+                                    PROJECT
+                                </span>
 
-                    <img
-                        src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80"
-                        alt="Project"
-                        class="project-image">
+                                <h3>
+                                    <?php echo htmlspecialchars($project['title']); ?>
+                                </h3>
 
-                    <div class="project-body">
+                                <p>
+                                    <?php echo nl2br(htmlspecialchars($project['description'] ?? '')); ?>
+                                </p>
 
-                        <span class="project-category">
-                            CONTRACT
-                        </span>
+                            </div>
 
-                        <h3>
-                            Project Name
-                        </h3>
-
-                        <p>
-                            Project description will be retrieved
-                            from the database.
-                        </p>
+                        </article>
 
                     </div>
 
-                </article>
+                <?php endforeach; ?>
 
-            </div>
+            <?php else: ?>
 
+                <div class="col-12 text-center">
 
-            <div class="col-md-6 col-lg-4">
+                    <p>
+                        No projects are currently available.
+                    </p>
 
-                <article class="project-card">
+                </div>
 
-                    <img
-                        src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=900&q=80"
-                        alt="Project"
-                        class="project-image">
-
-                    <div class="project-body">
-
-                        <span class="project-category">
-                            SUPPLY
-                        </span>
-
-                        <h3>
-                            Project Name
-                        </h3>
-
-                        <p>
-                            Project description will be retrieved
-                            from the database.
-                        </p>
-
-                    </div>
-
-                </article>
-
-            </div>
+            <?php endif; ?>
 
         </div>
 
@@ -213,7 +281,10 @@ include 'header.php';
 </section>
 
 
-<!-- CONTACT -->
+<!-- ============================================================
+     CONTACT
+============================================================= -->
+
 <section id="contact" class="contact-section section-padding">
 
     <div class="container">
@@ -227,15 +298,18 @@ include 'header.php';
                     <span>CONTACT US</span>
 
                     <h2>
-                        Let's work together.
+
+                        <?php echo $contact_title; ?>
+
                     </h2>
 
                 </div>
 
-                <p>
-                    Contact us for enquiries, procurement requirements,
-                    contract opportunities and supply services.
-                </p>
+                <div>
+
+                    <?php echo $contact_content; ?>
+
+                </div>
 
                 <div class="contact-details">
 
@@ -262,6 +336,29 @@ include 'header.php';
             <div class="col-lg-7">
 
                 <div class="contact-card">
+
+
+                    <?php if ($contact_success): ?>
+
+                        <div class="alert alert-success">
+
+                            <?php echo htmlspecialchars($contact_success); ?>
+
+                        </div>
+
+                    <?php endif; ?>
+
+
+                    <?php if ($contact_error): ?>
+
+                        <div class="alert alert-danger">
+
+                            <?php echo htmlspecialchars($contact_error); ?>
+
+                        </div>
+
+                    <?php endif; ?>
+
 
                     <form method="POST">
 
@@ -314,8 +411,12 @@ include 'header.php';
 
                             <div class="col-12">
 
-                                <button class="btn btn-brand btn-lg">
+                                <button
+                                    type="submit"
+                                    class="btn btn-brand btn-lg">
+
                                     Send Message
+
                                 </button>
 
                             </div>

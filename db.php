@@ -2,6 +2,36 @@
 
 /*
 |--------------------------------------------------------------------------
+| Load .env for local development
+|--------------------------------------------------------------------------
+| parse_ini_file() returns an array but does NOT populate the environment.
+| We push each value into putenv() so getenv() works everywhere.
+|--------------------------------------------------------------------------
+*/
+
+if (getenv('APP_ENV') !== 'production') {
+
+    $envFile = __DIR__ . '/.env';
+
+    if (!file_exists($envFile)) {
+        die(".env file not found.");
+    }
+
+    $env = parse_ini_file($envFile, false, INI_SCANNER_RAW);
+
+    if (!$env) {
+        die("Unable to read .env file.");
+    }
+
+    foreach ($env as $key => $value) {
+        putenv("$key=$value");
+        $_ENV[$key] = $value;
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
 | Database configuration
 |--------------------------------------------------------------------------
 | Local development:
@@ -12,29 +42,8 @@
 |--------------------------------------------------------------------------
 */
 
-if (getenv('APP_ENV') === 'production') {
-
-    // Render provides environment variables
-    $databaseUrl = getenv('DATABASE_URL');
-    $appEnv = getenv('APP_ENV');
-} else {
-
-    // Local development: read .env
-    $envFile = __DIR__ . '/.env';
-
-    if (!file_exists($envFile)) {
-        die(".env file not found.");
-    }
-
-    $env = parse_ini_file($envFile);
-
-    if (!$env) {
-        die("Unable to read .env file.");
-    }
-
-    $databaseUrl = $env['DATABASE_URL'] ?? null;
-    $appEnv = $env['APP_ENV'] ?? 'development';
-}
+$databaseUrl = getenv('DATABASE_URL');
+$appEnv = getenv('APP_ENV') ?: 'development';
 
 if (!$databaseUrl) {
     die("DATABASE_URL is not configured.");
@@ -44,10 +53,10 @@ if (!$databaseUrl) {
 // Parse PostgreSQL connection URL
 $dbparams = parse_url($databaseUrl);
 
-$host = $dbparams['host'];
-$port = $dbparams['port'] ?? 5432;
-$user = $dbparams['user'];
-$pass = $dbparams['pass'];
+$host   = $dbparams['host'];
+$port   = $dbparams['port'] ?? 5432;
+$user   = $dbparams['user'];
+$pass   = $dbparams['pass'];
 $dbname = ltrim($dbparams['path'], '/');
 
 

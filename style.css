@@ -422,3 +422,31 @@ h5 {
     text-transform: uppercase;
     opacity: 0.9;
 }
+
+.project-image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.project-image-wrapper .project-image {
+    display: block;
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.project-image-two {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+.project-image-wrapper:hover .project-image-two {
+    opacity: 1;
+}
+
+.project-image-wrapper:hover .project-image-one {
+    opacity: 0;
+}
