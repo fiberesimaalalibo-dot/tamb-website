@@ -6,29 +6,32 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <!DOCTYPE html>
 <html lang="en">
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "TAMBELS 4 REAL NIG. LTD",
+        "url": "https://tamb-website.onrender.com/",
+        "logo": "https://tamb-website.onrender.com/logo.png"
+    }
+</script>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TAMBELS 4 REAL NIG. LTD</title>
+    <title>TAMBELS 4 REAL NIG. LTD | Contract, Procurement & Supply Services</title>
 
-    <!-- Bootstrap CSS -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <meta name="description"
+        content="TAMBELS 4 REAL NIG. LTD provides professional contract, procurement, sales, supply, cleaning, landscaping, civil and construction services.">
 
-    <!-- Bootstrap Icons -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-        rel="stylesheet">
+    <meta name="robots" content="index, follow">
 
-    <!-- Inter Font -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link rel="canonical" href="https://tamb-website.onrender.com/">
 
-    <!-- Our CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
